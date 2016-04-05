@@ -17,7 +17,7 @@ Allowed HTTPs request:
 - `PUT` - Update a resource
 - `GET` - Retrieve a resource
 
-Note that requests made using `PUT` can also be done using `POST`, unless the a specific reference below says otherwise.
+Note that requests made using `PUT` can also be done using `POST`, unless the reference below says otherwise.
 
 ## API Authorization
 
@@ -35,6 +35,10 @@ to API endpoint should include
 Authorization: Basic cGFra2FkaW06bWlkYWtrYXA
 ```
 
+Notice that `cGFra2FkaW06bWlkYWtrYXA` is the output of `Base64(pakkadim:midakkap)`.
+
+Any request made without specifying the authorization header will be responded with `403` error.
+
 ## Notes on API Authorization
 
 If your API Token and Secret are exposed to the public, it should be considered to generate new
@@ -45,58 +49,139 @@ breaching the access to the data stored on the server.
 
 ### Get Orders [GET]
 
-+ Request
++ Request (application/json)
+    + Headers
+        
+            Accept: application/json
+            Authorization: Basic base64-of-token:secret
     
-    + Attributes
-
-        + order_id_list (array[string]) - List of entry/order IDs.
+    + Attributes (array)
+        + order_id - Order/entry ID
     
     + Body
     
-            {
-                "order_id_list": ["A15100", "O120944"]
-            }
+            ["A151003"]
 
 + Response 200 (application/json)
 
-        [
-            {
-                "order_id": 8008135,
-                "attrib_1": "value_1",
-                "attrib_2": "value_2",
-                "attrib_3": "value_3",
-                "attrib_n": "value_n"
-            }
-        ]
+    + Attributes (array[ECFAOrder])
+    
+    + Body
+
+            [
+                {
+                    "order_id": "A151003",
+                    "fraud_percentage": 25
+                }
+            ]
 
 ### Store Orders [POST]
 
-+ Request
++ Request (application/json)
     + Headers
         
+            Accept: application/json
             Authorization: Basic base64-of-token:secret
+        
+    + Attributes (array[Order])
 
     + Body
     
+            [
+                {
+                    "order_id": "A151003"
+                }
+            ]
+
++ Response 201 (application/json)
+    + Attributes (CreationUpdateResponse)
+    
+    + Body
+    
             {
-                "order_id": 12345,
-                "attrib_1": "value_1",
-                "attrib_2": "value_2",
-                "attrib_3": "value_3",
-                "attrib_n": "value_n"
+                "code": 201,
+                successful_ids: [
+                    "A151003"
+                ],
+                unsuccessful_ids: [
+                    "B151003"
+                ]
             }
 
-+ Response 200 (application/json)
-
-        [
++ Response 401 (application/json)
+    + Attributes (UnauthorizedResponse)
+    
+    + Body
+    
             {
-                "order_id": order_id,
-                
+                "code": 403,
+                "message": "Authorization header not found or invalid."
             }
-        ]
 
-### Update Order [PUT]
+### Update Orders [PUT]
 
-Note that this API request acts the same with the `POST` one, except that this will 
+Note that this API request acts the same with the `POST` one, except that this one will only return `200` if all
+of the identifiers are found in the server.
 
-+ Response 200 (application/json)
++ Request (application/json)
+    + Headers
+        
+            Accept: application/json
+            Authorization: Basic base64-of-token:secret
+        
+    + Attributes (array[Order])
+
+    + Body
+    
+            [
+                {
+                    "order_id": "A151003"
+                }
+            ]
+
++ Response 201 (application/json)
+    + Attributes (CreationUpdateResponse)
+    
+    + Body
+    
+            {
+                "code": 201,
+                successful_ids: [
+                    "A151003"
+                ],
+                unsuccessful_ids: [
+                    "B151003"
+                ]
+            }
+
++ Response 401 (application/json)
+    + Attributes (UnauthorizedResponse)
+    
+    + Body
+    
+            {
+                "code": 403,
+                "message": "Authorization header not found or invalid."
+            }
+
+# Data Structures
+
+## Order (object)
++ order_id: A151003 (string, required) - The ID for an order/entry.
+
+## ECFAOrder (Order)
++ fraud_percentage: 25 (number) - The fraud percentage of an order/entry.
+
+## Response (object)
++ code: 200 (number, required) - The response's return code.
+
+## CreationUpdateResponse (object)
++ code: 201 (number, required) - The response's return code.
++ successful_ids (array, required) - Collection of string denoting the order ID's which are successfuly made/updated.
+    + A151003 (string) - The ID of the successfully made/updated order/entry.
++ unsuccessful_ids (array, required) - Collection of string denoting the order ID's which are failed to be made/updated.
+    + B151003 (string) - The ID of the unsuccessfully made/update order/entry.
+
+## UnauthorizedResponse (object)
++ code: 403 (number, required) - The response's return code.
++ message: Authorization header not found or invalid. (string, required) - The message denoting the error.
