@@ -1,0 +1,102 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# ECFA Data Endpoint API
+
+This API is used by Fraud Analyzer client to store/retrieve information about orders.
+
+## HTTPs Request
+
+Every request should be made to the endpoint `https://api.ecfa-project.space/{resource}`, where `resource`
+refers to the resource target. Currently, `resource` only accepts `orders`.
+
+**Note that the request should be made via HTTPs protocol**
+
+Allowed HTTPs request:
+- `POST` - Create or update a resource
+- `PUT` - Update a resource
+- `GET` - Retrieve a resource
+
+Note that requests made using `PUT` can also be done using `POST`, unless the a specific reference below says otherwise.
+
+## API Authorization
+
+You should have had the API Token and Secret in order to be able to communicate with the API endpoint.
+Both Token and Secret will be used to make the Basic Authorization header which will look like this:
+
+```javascript
+Authorization: Basic Base64-of-token:secret
+```
+
+For example, if you have API Token `pakkadim` and API Secret `midakkap`, every request's header
+to API endpoint should include
+
+```javascript
+Authorization: Basic cGFra2FkaW06bWlkYWtrYXA
+```
+
+## Notes on API Authorization
+
+If your API Token and Secret are exposed to the public, it should be considered to generate new
+API Token and Secret as any adversary knowing the API Token and Secret may use masquerade attacks,
+breaching the access to the data stored on the server.
+
+## Order/Entry [/orders]
+
+### Get Orders [GET]
+
++ Request
+    
+    + Attributes
+
+        + order_id_list (array[string]) - List of entry/order IDs.
+    
+    + Body
+    
+            {
+                "order_id_list": ["A15100", "O120944"]
+            }
+
++ Response 200 (application/json)
+
+        [
+            {
+                "order_id": 8008135,
+                "attrib_1": "value_1",
+                "attrib_2": "value_2",
+                "attrib_3": "value_3",
+                "attrib_n": "value_n"
+            }
+        ]
+
+### Store Orders [POST]
+
++ Request
+    + Headers
+        
+            Authorization: Basic base64-of-token:secret
+
+    + Body
+    
+            {
+                "order_id": 12345,
+                "attrib_1": "value_1",
+                "attrib_2": "value_2",
+                "attrib_3": "value_3",
+                "attrib_n": "value_n"
+            }
+
++ Response 200 (application/json)
+
+        [
+            {
+                "order_id": order_id,
+                
+            }
+        ]
+
+### Update Order [PUT]
+
+Note that this API request acts the same with the `POST` one, except that this will 
+
++ Response 200 (application/json)
