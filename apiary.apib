@@ -45,6 +45,7 @@ If your API Token and Secret are exposed to the public, it should be considered 
 API Token and Secret as any adversary knowing the API Token and Secret may use masquerade attacks,
 breaching the access to the data stored on the server.
 
+
 ## Order/Entry [/orders]
 
 ### Get Orders [GET]
@@ -152,6 +153,307 @@ of the identifiers are found in the server.
                 unsuccessful_ids: [
                     "B151003"
                 ]
+            }
+
++ Response 401 (application/json)
+    + Attributes (UnauthorizedResponse)
+    
+    + Body
+    
+            {
+                "code": 403,
+                "message": "Authorization header not found or invalid."
+            }
+
+## Single Order/ Entry [/orders/{order_id}]
+
++ Parameters
+    + order_id (string) - ID of the order in the form of an integer / objectID 
+
+### Get an Order [GET]
++ Request 
+    + Headers
+        
+            Authorization: Basic base64-of-token:secret
+
+    
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "order_id": "A151003",
+                "fraud_percentage": 25
+                "status" : "accepted"
+                "timestamp" : "2016-01-15 12:13:14" 
+            }
+
++ Request(application/json)
+    
+    + Headers
+    
+            Accept: application/json
+            Authorization: Basic base64-of-token:secret
+    
+    + Body
+    
+            {
+                "id" : "A151003"
+                "user_id" : "123ECFA123"
+                "start_date" : "2016-01-15"
+                "end_date" : "2016-01-16"
+            }
+
++ Response 200(application/json)
+
+    + Attributes (array[Order])
+    
+    + Body
+    
+            [
+                {
+                    "order_id": "A151003",
+                    "fraud_percentage": 25
+                    "status" : "accepted"
+                    "timestamp" : "2016-01-15 12:13:14"        
+                },
+                {
+                    "order_id": "A151004",
+                    "fraud_percentage": 90
+                    "status" : "rejected"
+                    "timestamp" : "2016-01-16 12:13:14"
+                }
+            ]
+
+### Store an Order [POST]
+
++ Request (application/json)
+    + Headers
+        
+            Accept: application/json
+            Authorization: Basic base64-of-token:secret
+
+    + Body
+    
+            {
+                "id" : "123123h8913"
+                "item_total" : "5"
+                "total" : "20000"
+                "state" : "1"
+                "adjustment_total" : "1"
+                "user_id" : "123ECFA123"
+                "completed_at" : "2016-01-15 12:13:14"
+                "payment_total" : "Double"
+                "shipping_method_id" : "Integer"
+                "shipment_state" : "String"
+                "payment_state" : "String"
+                "email" : "String"
+                "special_instructions" : "String"
+                "created_at" : "Timestamp"
+                "updated_at" : "Timestamp"
+                "currency" : "Symbol"
+                "last_ip_address": "String"
+                "shipment_total" : "Integer"
+                "additional_tax_total" : "Integer"
+                "promo_total" : "Integer"
+                "item_count" : "invitation_tokenger"
+                "confirmation_delivered" : Boolean"
+                "considered_risky" : "Boolean",
+                products :
+                [
+                    {
+                        "id" : "ObjectID"
+                        "name" : "String"
+                        "description" : "String"
+                        "price" : "Double"
+                        "Type" : "String"
+                    }
+                    {
+                        "id" : "ObjectID"
+                        "name" : "String"
+                        "description" : "String"
+                        "price" : "Double"
+                        "type" : "String"
+                    }
+                ]
+                
+                "ship_address_id" :
+                [
+                    {
+                        "id" : "ObjectID",
+                        "firstname" : "String",
+                        "lastname" : "String",
+                        "address1" : "String",
+                        "address2" : "String",
+                        "city" : "String",
+                        "zipcode" : "String",
+                        "phone" : "String",
+                        "state_name" : "String",
+                        "alternative_phone" : "String",
+                        "company" : "String",
+                        "state_id" : "Integer",
+                        "country_id" :"Integer",
+                        "created_at" : "Timestamp",
+                        "updated_at" : "Timestamp",
+                        "sub_district'" : "String",
+                        "delivery_instruction" : "String",
+                        "preferences" : "String"
+                    }
+                    {
+                        "id" : "ObjectID",
+                        "firstname" : "String",
+                        "lastname" : "String",
+                        "address1" : "String",
+                        "address2" : "String",
+                        "city" : "String",
+                        "zipcode" : "String",
+                        "phone" : "String",
+                        "state_name" : "String",
+                        "alternative_phone" : "String",
+                        "company" : "String",
+                        "state_id" : "Integer",
+                        "country_id" :"Integer",
+                        "created_at" : "Timestamp",
+                        "updated_at" : "Timestamp",
+                        "sub_district'" : "String",
+                        "delivery_instruction" : "String",
+                        "preferences" : "String"
+                    }
+                     
+                ]
+                
+            }
+            }
+
++ Response 201 (application/json)
+    + Attributes (CreationUpdateResponse)
+    
+    + Body
+    
+            {
+                "code": "201"
+                "successful_ids": "A151003"
+            }
+
++ Response 401 (application/json)
+    + Attributes (UnauthorizedResponse)
+    
+    + Body
+    
+            {
+                "code": 403,
+                "message": "Authorization header not found or invalid."
+            }
+
+### Update an Order [PUT]
+
++ Request (application/json)
+    + Headers
+        
+            Accept: application/json
+            Authorization: Basic base64-of-token:secret
+        
+    + Body
+    
+            {
+                "id" : "123123h8913"
+                "item_total" : "5"
+                "total" : "20000"
+                "state" : "1"
+                "adjustment_total" : "1"
+                "user_id" : "123ECFA123"
+                "completed_at" : "2016-01-15 12:13:14"
+                "payment_total" : "Double"
+                "shipping_method_id" : "Integer"
+                "shipment_state" : "String"
+                "payment_state" : "String"
+                "email" : "String"
+                "special_instructions" : "String"
+                "created_at" : "Timestamp"
+                "updated_at" : "Timestamp"
+                "currency" : "Symbol"
+                "last_ip_address": "String"
+                "shipment_total" : "Integer"
+                "additional_tax_total" : "Integer"
+                "promo_total" : "Integer"
+                "item_count" : "invitation_tokenger"
+                "confirmation_delivered" : Boolean"
+                "considered_risky" : "Boolean",
+                products :
+                [
+                    {
+                        "id" : "ObjectID"
+                        "name" : "String"
+                        "description" : "String"
+                        "price" : "Double"
+                        "Type" : "String"
+                    }
+                    {
+                        "id" : "ObjectID"
+                        "name" : "String"
+                        "description" : "String"
+                        "price" : "Double"
+                        "type" : "String"
+                    }
+                ]
+                
+                "ship_address_id" :
+                [
+                    {
+                        "id" : "ObjectID",
+                        "firstname" : "String",
+                        "lastname" : "String",
+                        "address1" : "String",
+                        "address2" : "String",
+                        "city" : "String",
+                        "zipcode" : "String",
+                        "phone" : "String",
+                        "state_name" : "String",
+                        "alternative_phone" : "String",
+                        "company" : "String",
+                        "state_id" : "Integer",
+                        "country_id" :"Integer",
+                        "created_at" : "Timestamp",
+                        "updated_at" : "Timestamp",
+                        "sub_district'" : "String",
+                        "delivery_instruction" : "String",
+                        "preferences" : "String"
+                    }
+                    {
+                        "id" : "ObjectID",
+                        "firstname" : "String",
+                        "lastname" : "String",
+                        "address1" : "String",
+                        "address2" : "String",
+                        "city" : "String",
+                        "zipcode" : "String",
+                        "phone" : "String",
+                        "state_name" : "String",
+                        "alternative_phone" : "String",
+                        "company" : "String",
+                        "state_id" : "Integer",
+                        "country_id" :"Integer",
+                        "created_at" : "Timestamp",
+                        "updated_at" : "Timestamp",
+                        "sub_district'" : "String",
+                        "delivery_instruction" : "String",
+                        "preferences" : "String"
+                    }
+                     
+                ]
+                
+            }
+            }
+
++ Response 201 (application/json)
+    + Attributes (CreationUpdateResponse)
+    
+    + Body
+    
+            {
+                "code": 201
+                "successful_ids": "A151003"
+               
             }
 
 + Response 401 (application/json)
