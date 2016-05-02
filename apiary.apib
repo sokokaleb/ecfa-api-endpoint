@@ -236,51 +236,41 @@ of the identifiers are found in the server.
     + Body
     
             {
-                "id" : "123123h8913"
-                "item_total" : "5"
-                "total" : "20000"
-                "state" : "1"
-                "adjustment_total" : "1"
-                "user_id" : "123ECFA123"
-                "completed_at" : "2016-01-15 12:13:14"
-                "payment_total" : "Double"
-                "shipping_method_id" : "Integer"
-                "shipment_state" : "String"
+                "id" : "String"
+                "item_total" : "Float"
+                "total" : "FLoat"
+                "adjustment_total" : "Float"
+                "user": "ilham1"
+                "user_verified": "Boolean"
+                "total_quantity": "5"
+                "created_at" : "2016-01-15 10:13:14"
+                "updated_at" : "2016-01-15 12:13:14"
+                "payment_total" : "Float"
                 "payment_state" : "String"
-                "email" : "String"
                 "special_instructions" : "String"
-                "created_at" : "Timestamp"
-                "updated_at" : "Timestamp"
-                "currency" : "Symbol"
                 "last_ip_address": "String"
-                "shipment_total" : "Integer"
-                "additional_tax_total" : "Integer"
-                "promo_total" : "Integer"
-                "item_count" : "invitation_tokenger"
-                "confirmation_delivered" : Boolean"
                 "considered_risky" : "Boolean",
-                products :
+                "products" :
                 [
                     {
-                        "id" : "ObjectID"
-                        "name" : "String"
+                        "product_id" : "Integer"
+                        "product_name" : "String"
                         "description" : "String"
-                        "price" : "Double"
-                        "Type" : "String"
+                        "price" : "Float"
+                        "product_type" : "String"
                     }
                     {
-                        "id" : "ObjectID"
-                        "name" : "String"
+                        "product_id" : "Integer"
+                        "product_name" : "String"
                         "description" : "String"
-                        "price" : "Double"
-                        "type" : "String"
+                        "price" : "Float"
+                        "product_type" : "String"
                     }
-                ]
-                
-                "ship_address_id" :
+                ],
+                "ship_address" :
                 [
                     {
-                        "id" : "ObjectID",
+                        "id" : "Integer",
                         "firstname" : "String",
                         "lastname" : "String",
                         "address1" : "String",
@@ -300,7 +290,7 @@ of the identifiers are found in the server.
                         "preferences" : "String"
                     }
                     {
-                        "id" : "ObjectID",
+                        "id" : "Integer",
                         "firstname" : "String",
                         "lastname" : "String",
                         "address1" : "String",
@@ -320,6 +310,16 @@ of the identifiers are found in the server.
                         "preferences" : "String"
                     }
                      
+                ],
+                "adjustment":
+                [
+                    {
+                        "adjustment_id": "Integer"
+                        "source_type": "String"
+                        "label": "String"
+                        "amount": "Float"
+
+                    }
                 ]
                 
             }
