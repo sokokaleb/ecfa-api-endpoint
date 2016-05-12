@@ -466,7 +466,7 @@ of the identifiers are found in the server.
                 "message": "Authorization header not found or invalid."
             }
 
-## Single Order/Entry for Fraud Percentage [/order/user/{user_id}]
+## Single Order/Entry for Retrieving Fraud Percentage [/order/user/{user_id}]
 
 + Parameters
     + user_id (string) - ID of the order in the form of an integer / objectID 
@@ -506,127 +506,7 @@ of the identifiers are found in the server.
                 "message": "Authorization header not found or invalid."
             }
 
-### Store an Order [POST]
-
-+ Request (application/json)
-    + Headers
-        
-            Accept: application/json
-            Authorization: Basic base64-of-token:secret
-
-    + Body
-    
-            {
-                "id" : "String"
-                "item_total" : "Float"
-                "total" : "FLoat"
-                "adjustment_total" : "Float"
-                "user": "rio20"
-                "user_verified": "Boolean"
-                "total_quantity": "5"
-                "created_at" : "2016-02-13 22:53:34"
-                "updated_at" : "2016-02-13 22:58:51"
-                "payment_total" : "Float"
-                "payment_state" : "String"
-                "special_instructions" : "String"
-                "last_ip_address": "String"
-                "considered_risky" : "Boolean",
-                "products" :
-                [
-                    {
-                        "product_id" : "Integer"
-                        "product_name" : "String"
-                        "description" : "String"
-                        "price" : "Float"
-                        "product_type" : "String"
-                    }
-                    {
-                        "product_id" : "Integer"
-                        "product_name" : "String"
-                        "description" : "String"
-                        "price" : "Float"
-                        "product_type" : "String"
-                    }
-                ],
-                "ship_address" :
-                [
-                    {
-                        "id" : "Integer",
-                        "firstname" : "String",
-                        "lastname" : "String",
-                        "address1" : "String",
-                        "address2" : "String",
-                        "city" : "String",
-                        "zipcode" : "String",
-                        "phone" : "String",
-                        "state_name" : "String",
-                        "alternative_phone" : "String",
-                        "company" : "String",
-                        "state_id" : "Integer",
-                        "country_id" :"Integer",
-                        "created_at" : "Timestamp",
-                        "updated_at" : "Timestamp",
-                        "sub_district'" : "String",
-                        "delivery_instruction" : "String",
-                        "preferences" : "String"
-                    }
-                    {
-                        "id" : "Integer",
-                        "firstname" : "String",
-                        "lastname" : "String",
-                        "address1" : "String",
-                        "address2" : "String",
-                        "city" : "String",
-                        "zipcode" : "String",
-                        "phone" : "String",
-                        "state_name" : "String",
-                        "alternative_phone" : "String",
-                        "company" : "String",
-                        "state_id" : "Integer",
-                        "country_id" :"Integer",
-                        "created_at" : "Timestamp",
-                        "updated_at" : "Timestamp",
-                        "sub_district'" : "String",
-                        "delivery_instruction" : "String",
-                        "preferences" : "String"
-                    }
-                     
-                ],
-                "adjustment":
-                [
-                    {
-                        "adjustment_id": "Integer"
-                        "source_type": "String"
-                        "label": "String"
-                        "amount": "Float"
-
-                    }
-                ]
-                
-            }
-            }
-
-+ Response 201 (application/json)
-    + Attributes (CreationUpdateResponse)
-    
-    + Body
-    
-            {
-                "code": "201"
-                "successful_ids": "A151601"
-            }
-
-+ Response 401 (application/json)
-    + Attributes (UnauthorizedResponse)
-    
-    + Body
-    
-            {
-                "code": 403,
-                "message": "Authorization header not found or invalid."
-            }
-
-## Multiple Orders/Entries for Fraud Percentage [/orders/user/{user_id}]
+## Multiple Orders/Entries for Retrieving Fraud Percentage [/orders/user/{user_id}]
 
 + Parameters
     + user_id (string) - ID of the order in the form of an integer / objectID 
@@ -657,19 +537,21 @@ of the identifiers are found in the server.
 + Response 200 (application/json)
 
     + Body
-
-            {
-                "order_id": "A151602",
-                "fraud_percentage": 65
-            },
-            {
-                "order_id": "A151603",
-                "fraud_percentage": 35
-            },
-            {
-                "order_id": "A151604",
-                "fraud_percentage": 55
-            }
+    
+            [
+                {
+                    "order_id": "A151602",
+                    "fraud_percentage": 65
+                },
+                {
+                    "order_id": "A151603",
+                    "fraud_percentage": 35
+                },
+                {
+                    "order_id": "A151604",
+                    "fraud_percentage": 55
+                }
+            ]
 
 + Response 401 (application/json)
 
