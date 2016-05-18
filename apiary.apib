@@ -632,7 +632,7 @@ of the identifiers are found in the server.
     + user_id (string) - ID of the order in the form of an integer / objectID 
 
 
-### Get an Order [GET]
+### Get Orders [GET]
 + Request(application/json)
     
     + Headers
@@ -679,7 +679,7 @@ of the identifiers are found in the server.
     + fraud_percentage (int) - Desired fraud percentage to get the list with 
 
 
-### Get an Order [GET]
+### Get Orders [GET]
 + Request(application/json)
     
     + Headers
@@ -711,7 +711,7 @@ of the identifiers are found in the server.
     + desired_date (date) - Desired Date as the param, so that it will search the desired 
 
 
-### Get an Order [GET]
+### Get Orders [GET]
 + Request(application/json)
     
     + Headers
@@ -744,7 +744,71 @@ of the identifiers are found in the server.
     + end_date (date) - Desired end date to get the list with
 
 
-### Get an Order [GET]
+### Get Orders [GET]
++ Request(application/json)
+    
+    + Headers
+    
+            Authorization: Basic base64-of-token:secret
+    
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "A151602" : 65,
+                "A151603" : 100,
+                "A151604" : 90,
+            }
+
++ Response 401 (application/json)
+
+    + Body
+    
+            {
+                "code": 403,
+                "message": "Authorization header not found or invalid."
+            }
+
+## Multiple Orders/Entires for Greater Than Equals Specific Date [/api/order/date/after/{date}]
+
++ Parameters
+    + date (date) - Desired date  
+    
+
+### Get Orders [GET]
++ Request(application/json)
+    
+    + Headers
+    
+            Authorization: Basic base64-of-token:secret
+    
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "A151602" : 65,
+                "A151603" : 100,
+                "A151604" : 90,
+            }
+
++ Response 401 (application/json)
+
+    + Body
+    
+            {
+                "code": 403,
+                "message": "Authorization header not found or invalid."
+            }
+
+## Multiple Orders/Entires for Less Than Equals Specific Date [/api/order/before/after/{date}]
+
++ Parameters
+    + date (date) - Desired date  
+    
+
+### Get Orders [GET]
 + Request(application/json)
     
     + Headers
