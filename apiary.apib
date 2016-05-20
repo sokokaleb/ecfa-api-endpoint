@@ -14,10 +14,7 @@ refers to the resource target. Currently, `resource` only accepts `orders`.
 
 Allowed HTTPs request:
 - `POST` - Create or update a resource
-- `PUT` - Update a resource
 - `GET` - Retrieve a resource
-
-Note that requests made using `PUT` can also be done using `POST`, unless the reference below says otherwise.
 
 ## API Authorization
 
@@ -46,9 +43,15 @@ API Token and Secret as any adversary knowing the API Token and Secret may use m
 breaching the access to the data stored on the server.
 
 
-## Order/Entry [/orders]
+## Multiple Orders [/orders]
+
+Via this endpoint (`/orders`) you can make request related to more than one orders.
 
 ### Get Orders [GET]
+
+Using `GET` method, the API will return a list of orders that is specified inside the request body.
+Note that the body should be in a form of JSON, and the response will attach only the `order_id` and
+its `fraud_percentage`.
 
 + Request (application/json)
     + Headers
@@ -57,11 +60,14 @@ breaching the access to the data stored on the server.
             Authorization: Basic base64-of-token:secret
     
     + Attributes (array)
-        + order_id - Order/entry ID
     
     + Body
     
-            ["A151003"]
+            [
+                {
+                    "order_id": "A151601"
+                }
+            ]
 
 + Response 200 (application/json)
 
@@ -76,39 +82,6 @@ breaching the access to the data stored on the server.
                 }
             ]
 
-### Store Orders [POST]
-
-+ Request (application/json)
-    + Headers
-        
-            Accept: application/json
-            Authorization: Basic base64-of-token:secret
-        
-    + Attributes (array[Order])
-
-    + Body
-    
-            [
-                {
-                    "order_id": "A151003"
-                }
-            ]
-
-+ Response 201 (application/json)
-    + Attributes (CreationUpdateResponse)
-    
-    + Body
-    
-            {
-                "code": 201,
-                successful_ids: [
-                    "A151003"
-                ],
-                unsuccessful_ids: [
-                    "B151003"
-                ]
-            }
-
 + Response 401 (application/json)
     + Attributes (UnauthorizedResponse)
     
@@ -119,10 +92,11 @@ breaching the access to the data stored on the server.
                 "message": "Authorization header not found or invalid."
             }
 
-### Update Orders [PUT]
+### Update Orders [POST]
 
-Note that this API request acts the same with the `POST` one, except that this one will only return `200` if all
-of the identifiers are found in the server.
+Using `POST` method, the API expect the body of the request to contain a JSON object that represents a list of order objects.
+The API will later insert order entries based on the objects contained inside the request (or update any of them if any order
+has already found inside ECFA's DB).
 
 + Request (application/json)
     + Headers
@@ -131,28 +105,110 @@ of the identifiers are found in the server.
             Authorization: Basic base64-of-token:secret
         
     + Attributes (array[Order])
-
+    
     + Body
     
             [
                 {
-                    "order_id": "A151003"
+                    "order_id": "soko001",
+                    "item_total": 123005.00,
+                    "total": 115005.00,
+                    "adjustment_total": -8000.0,
+                    "user":
+                    {
+                        "user_id": 4,
+                        "email": "sokokaleb@gmail.com",
+                        "current_sign_in_ip": "127.0.0.1",
+                        "last_sign_in_ip": "127.0.0.1",
+                        "created_at": "2015-10-10 10:10:10",
+                        "updated_at": "2015-10-10 10:10:10",
+                        "invitations_count": 0,
+                        "first_name": "Udin",
+                        "last_name": "Sedunia",
+                        "phone_character": "+6287783277820"
+                    },
+                    "user_verified": true,
+                    "total_quantity": 5,
+                    "created_at": "2016-10-10 10:10:10",
+                    "updated_at": "2016-10-10 12:10:10",
+                    "payment_total": 115005.0,
+                    "payment_state": "Lunas",
+                    "special_instruction": "Ditaro di depan pintu aja ya, Mas",
+                    "last_ip_address": "127.0.0.1",
+                    "considered_risky": false,
+                    "products":
+                    [
+                        {
+                            "product_id": 4,
+                            "product_name": "Cabai Segar AF",
+                            "description": "Cabai segar, diambil dari perkebunan kaki Gunung Bromo.",
+                            "price": 10000.0,
+                            "product_type": "Sayuran"
+                        },
+                        {
+                            "product_id": 9,
+                            "product_name": "Kecap Manis Cap Bango 1500mL",
+                            "description": "Kecap manis original, Cap Bango. Ukuran 1500mL.",
+                            "price": 50005.0,
+                            "product_type": "Bahan Memasak"
+                        },
+                        {
+                            "product_id": 14,
+                            "product_name": "Kecap Manis Cap Kaki Tiga 1500mL",
+                            "description": "Kecap manis original, Cap Kaki Tiga. Ukuran 1500mL.",
+                            "price": 43000.0,
+                            "product_type": "Bahan Memasak"
+                        },
+                        {
+                            "product_id": 19,
+                            "product_name": "Cuka Cap Enaak 100mL",
+                            "description": "Cuka asam penyedap makanan. Ukuran 100mL.",
+                            "price": 10000.0,
+                            "product_type": "Bahan Memasak"
+                        },
+                        {
+                            "product_id": 24,
+                            "product_name": "Sendok Plastik Pesta, 20pcs",
+                            "description": "Sendok plastik untuk kepentingan acara, ukuran kecil, sebanyak 20 buah.",
+                            "price": 10000.0,
+                            "product_type": "Alat Makan"
+                        }
+                    ],
+                    "ship_address":
+                    [
+                        {
+                            "address_id": 4,
+                            "firstname": "Udin",
+                            "lastname": "Sedunia",
+                            "address1": "Griya Ndeprok Asri E1-14, RT 012/RW 024, Mekarjaya, Sukmajaya",
+                            "city": "Kota Depok",
+                            "zipcode": "16411",
+                            "phone": "+6287783277820",
+                            "created_at": "2016-10-10 10:10:10",
+                            "updated_at": "2016-10-10 12:10:10",
+                            "delivery_instruction": "Ditaro di depan pintu aja ya, Mas"
+                        }
+                    ],
+                    "adjustment":
+                    [
+                        {
+                            "adjustment_id": 4,
+                            "source_type": "HappyFresh",
+                            "label": "Discount",
+                            "amount": 8000.0
+                        }
+                    ]
                 }
             ]
 
-+ Response 201 (application/json)
++ Response 200 (application/json)
     + Attributes (CreationUpdateResponse)
     
     + Body
     
             {
-                "code": 201,
-                successful_ids: [
-                    "A151003"
-                ],
-                unsuccessful_ids: [
-                    "B151003"
-                ]
+                "message": "Data successfully sent."
+                "code": 200
             }
 
 + Response 401 (application/json)
@@ -161,16 +217,20 @@ of the identifiers are found in the server.
     + Body
     
             {
-                "code": 403,
-                "messa./ge": "Authorization header not found or invalid."
+                "message": "Authorization header not found or invalid.",
+                "code": 403
             }
 
-## Single Order/ Entry [/orders/{order_id}]
+## Single Order/Entry [/order/{order_id}]
 
 + Parameters
     + order_id (string) - ID of the order in the form of an integer / objectID 
 
 ### Get an Order [GET]
+
+Using `GET` method, the API will return an object that informs the `fraud_percentage` of the order which id is
+specified.
+
 + Request 
     + Headers
         
@@ -184,436 +244,129 @@ of the identifiers are found in the server.
             {
                 "order_id": "A151003",
                 "fraud_percentage": 25
-                "status" : "accepted"
-                "timestamp" : "2016-01-15 12:13:14" 
             }
 
-+ Request(application/json)
-    
-    + Headers
-    
-            Accept: application/json
-            Authorization: Basic base64-of-token:secret
-    
++ Response 401 (application/json)
+
     + Body
     
             {
-                "id" : "A151003"
-                "user_id" : "123ECFA123"
-                "start_date" : "2016-01-15"
-                "end_date" : "2016-01-16"
+                "code": 401,
+                "message": "Authorization header not found or invalid."
             }
-
-+ Response 200(application/json)
-
-    + Attributes (array[Order])
-    
-    + Body
-    
-            [
-                {
-                    "order_id": "A151003",
-                    "fraud_percentage": 25
-                    "status" : "accepted"
-                    "timestamp" : "2016-01-15 12:13:14"        
-                },
-                {
-                    "order_id": "A151004",
-                    "fraud_percentage": 90
-                    "status" : "rejected"
-                    "timestamp" : "2016-01-16 12:13:14"
-                }
-            ]
 
 ### Store an Order [POST]
 
-+ Request (application/json)
-    + Headers
-        
-            Accept: application/json
-            Authorization: Basic base64-of-token:secret
-
-    + Body
-    
-            {
-                "id" : "String"
-                "item_total" : "Float"
-                "total" : "FLoat"
-                "adjustment_total" : "Float"
-                "user": "ilham1"
-                "user_verified": "Boolean"
-                "total_quantity": "5"
-                "created_at" : "2016-01-15 10:13:14"
-                "updated_at" : "2016-01-15 12:13:14"
-                "payment_total" : "Float"
-                "payment_state" : "String"
-                "special_instructions" : "String"
-                "last_ip_address": "String"
-                "considered_risky" : "Boolean",
-                "products" :
-                [
-                    {
-                        "product_id" : "Integer"
-                        "product_name" : "String"
-                        "description" : "String"
-                        "price" : "Float"
-                        "product_type" : "String"
-                    }
-                    {
-                        "product_id" : "Integer"
-                        "product_name" : "String"
-                        "description" : "String"
-                        "price" : "Float"
-                        "product_type" : "String"
-                    }
-                ],
-                "ship_address" :
-                [
-                    {
-                        "id" : "Integer",
-                        "firstname" : "String",
-                        "lastname" : "String",
-                        "address1" : "String",
-                        "address2" : "String",
-                        "city" : "String",
-                        "zipcode" : "String",
-                        "phone" : "String",
-                        "state_name" : "String",
-                        "alternative_phone" : "String",
-                        "company" : "String",
-                        "state_id" : "Integer",
-                        "country_id" :"Integer",
-                        "created_at" : "Timestamp",
-                        "updated_at" : "Timestamp",
-                        "sub_district'" : "String",
-                        "delivery_instruction" : "String",
-                        "preferences" : "String"
-                    }
-                    {
-                        "id" : "Integer",
-                        "firstname" : "String",
-                        "lastname" : "String",
-                        "address1" : "String",
-                        "address2" : "String",
-                        "city" : "String",
-                        "zipcode" : "String",
-                        "phone" : "String",
-                        "state_name" : "String",
-                        "alternative_phone" : "String",
-                        "company" : "String",
-                        "state_id" : "Integer",
-                        "country_id" :"Integer",
-                        "created_at" : "Timestamp",
-                        "updated_at" : "Timestamp",
-                        "sub_district'" : "String",
-                        "delivery_instruction" : "String",
-                        "preferences" : "String"
-                    }
-                     
-                ],
-                "adjustment":
-                [
-                    {
-                        "adjustment_id": "Integer"
-                        "source_type": "String"
-                        "label": "String"
-                        "amount": "Float"
-
-                    }
-                ]
-                
-            }
-            }
-
-+ Response 201 (application/json)
-    + Attributes (CreationUpdateResponse)
-    
-    + Body
-    
-            {
-                "code": "201"
-                "successful_ids": "A151003"
-            }
-
-+ Response 401 (application/json)
-    + Attributes (UnauthorizedResponse)
-    
-    + Body
-    
-            {
-                "code": 403,
-                "message": "Authorization header not found or invalid."
-            }
-
-### Update an Order [PUT]
+Using `POST` method, the API expect the body of the request to contain a JSON object that represents an order object.
+The API will later insert the order (or update it on ECFA's DB).
 
 + Request (application/json)
     + Headers
         
-            Accept: application/json
-            Authorization: Basic base64-of-token:secret
-        
-    + Body
-    
-            {
-                "id" : "123123h8913"
-                "item_total" : "5"
-                "total" : "20000"
-                "state" : "1"
-                "adjustment_total" : "1"
-                "user_id" : "123ECFA123"
-                "completed_at" : "2016-01-15 12:13:14"
-                "payment_total" : "Double"
-                "shipping_method_id" : "Integer"
-                "shipment_state" : "String"
-                "payment_state" : "String"
-                "email" : "String"
-                "special_instructions" : "String"
-                "created_at" : "Timestamp"
-                "updated_at" : "Timestamp"
-                "currency" : "Symbol"
-                "last_ip_address": "String"
-                "shipment_total" : "Integer"
-                "additional_tax_total" : "Integer"
-                "promo_total" : "Integer"
-                "item_count" : "invitation_tokenger"
-                "confirmation_delivered" : Boolean"
-                "considered_risky" : "Boolean",
-                products :
-                [
-                    {
-                        "id" : "ObjectID"
-                        "name" : "String"
-                        "description" : "String"
-                        "price" : "Double"
-                        "Type" : "String"
-                    }
-                    {
-                        "id" : "ObjectID"
-                        "name" : "String"
-                        "description" : "String"
-                        "price" : "Double"
-                        "type" : "String"
-                    }
-                ]
-                
-                "ship_address_id" :
-                [
-                    {
-                        "id" : "ObjectID",
-                        "firstname" : "String",
-                        "lastname" : "String",
-                        "address1" : "String",
-                        "address2" : "String",
-                        "city" : "String",
-                        "zipcode" : "String",
-                        "phone" : "String",
-                        "state_name" : "String",
-                        "alternative_phone" : "String",
-                        "company" : "String",
-                        "state_id" : "Integer",
-                        "country_id" :"Integer",
-                        "created_at" : "Timestamp",
-                        "updated_at" : "Timestamp",
-                        "sub_district'" : "String",
-                        "delivery_instruction" : "String",
-                        "preferences" : "String"
-                    }
-                    {
-                        "id" : "ObjectID",
-                        "firstname" : "String",
-                        "lastname" : "String",
-                        "address1" : "String",
-                        "address2" : "String",
-                        "city" : "String",
-                        "zipcode" : "String",
-                        "phone" : "String",
-                        "state_name" : "String",
-                        "alternative_phone" : "String",
-                        "company" : "String",
-                        "state_id" : "Integer",
-                        "country_id" :"Integer",
-                        "created_at" : "Timestamp",
-                        "updated_at" : "Timestamp",
-                        "sub_district'" : "String",
-                        "delivery_instruction" : "String",
-                        "preferences" : "String"
-                    }
-                     
-                ]
-                
-            }
-            }
-
-+ Response 201 (application/json)
-    + Attributes (CreationUpdateResponse)
-    
-    + Body
-    
-            {
-                "code": 201
-                "successful_ids": "A151003"
-               
-            }
-
-+ Response 401 (application/json)
-    + Attributes (UnauthorizedResponse)
-    
-    + Body
-    
-            {
-                "code": 403,
-                "message": "Authorization header not found or invalid."
-            }
-
-## Single Order/Entry for Retrieving Fraud Percentage [/order/user/{user_id}]
-
-+ Parameters
-    + user_id (string) - ID of the order in the form of an integer / objectID 
-
-
-### Get an Order [GET]
-+ Request(application/json)
-    
-    + Headers
-    
-            Accept: application/json
+            Accept: application/jsonRevam
             Authorization: Basic base64-of-token:secret
 
     + Body
     
-            [
                 {
-                    "order_id": "A151601"
+                    "order_id": "soko001",
+                    "item_total": 123005.00,
+                    "total": 115005.00,
+                    "adjustment_total": -8000.0,
+                    "user":
+                    {
+                        "user_id": 4,
+                        "email": "sokokaleb@gmail.com",
+                        "current_sign_in_ip": "127.0.0.1",
+                        "last_sign_in_ip": "127.0.0.1",
+                        "created_at": "2015-10-10 10:10:10",
+                        "updated_at": "2015-10-10 10:10:10",
+                        "invitations_count": 0,
+                        "first_name": "Udin",
+                        "last_name": "Sedunia",
+                        "phone_character": "+6287783277820"
+                    },
+                    "user_verified": true,
+                    "total_quantity": 5,
+                    "created_at": "2016-10-10 10:10:10",
+                    "updated_at": "2016-10-10 12:10:10",
+                    "payment_total": 115005.0,
+                    "payment_state": "Lunas",
+                    "special_instruction": "Ditaro di depan pintu aja ya, Mas",
+                    "last_ip_address": "127.0.0.1",
+                    "considered_risky": false,
+                    "products":
+                    [
+                        {
+                            "product_id": 4,
+                            "product_name": "Cabai Segar AF",
+                            "description": "Cabai segar, diambil dari perkebunan kaki Gunung Bromo.",
+                            "price": 10000.0,
+                            "product_type": "Sayuran"
+                        },
+                        {
+                            "product_id": 9,
+                            "product_name": "Kecap Manis Cap Bango 1500mL",
+                            "description": "Kecap manis original, Cap Bango. Ukuran 1500mL.",
+                            "price": 50005.0,
+                            "product_type": "Bahan Memasak"
+                        },
+                        {
+                            "product_id": 14,
+                            "product_name": "Kecap Manis Cap Kaki Tiga 1500mL",
+                            "description": "Kecap manis original, Cap Kaki Tiga. Ukuran 1500mL.",
+                            "price": 43000.0,
+                            "product_type": "Bahan Memasak"
+                        },
+                        {
+                            "product_id": 19,
+                            "product_name": "Cuka Cap Enaak 100mL",
+                            "description": "Cuka asam penyedap makanan. Ukuran 100mL.",
+                            "price": 10000.0,
+                            "product_type": "Bahan Memasak"
+                        },
+                        {
+                            "product_id": 24,
+                            "product_name": "Sendok Plastik Pesta, 20pcs",
+                            "description": "Sendok plastik untuk kepentingan acara, ukuran kecil, sebanyak 20 buah.",
+                            "price": 10000.0,
+                            "product_type": "Alat Makan"
+                        }
+                    ],
+                    "ship_address":
+                    [
+                        {
+                            "address_id": 4,
+                            "firstname": "Udin",
+                            "lastname": "Sedunia",
+                            "address1": "Griya Ndeprok Asri E1-14, RT 012/RW 024, Mekarjaya, Sukmajaya",
+                            "city": "Kota Depok",
+                            "zipcode": "16411",
+                            "phone": "+6287783277820",
+                            "created_at": "2016-10-10 10:10:10",
+                            "updated_at": "2016-10-10 12:10:10",
+                            "delivery_instruction": "Ditaro di depan pintu aja ya, Mas"
+                        }
+                    ],
+                    "adjustment":
+                    [
+                        {
+                            "adjustment_id": 4,
+                            "source_type": "HappyFresh",
+                            "label": "Discount",
+                            "amount": 8000.0
+                        }
+                    ]
                 }
-            ]
-    
+
 + Response 200 (application/json)
-
-    + Body
-
-            {
-                "order_id": "A151601",
-                "fraud_percentage": 25
-            }
-
-+ Response 401 (application/json)
-
-    + Body
-    
-            {
-                "code": 403,
-                "message": "Authorization header not found or invalid."
-            }
-
-### Store an Order [POST]
-
-+ Request (application/json)
-    + Headers
-        
-            Accept: application/json
-            Authorization: Basic base64-of-token:secret
-
-    + Body
-    
-            {
-                "id" : "String"
-                "item_total" : "Float"
-                "total" : "FLoat"
-                "adjustment_total" : "Float"
-                "user": "rio20"
-                "user_verified": "Boolean"
-                "total_quantity": "5"
-                "created_at" : "2016-02-13 22:53:34"
-                "updated_at" : "2016-02-13 22:58:51"
-                "payment_total" : "Float"
-                "payment_state" : "String"
-                "special_instructions" : "String"
-                "last_ip_address": "String"
-                "considered_risky" : "Boolean",
-                "products" :
-                [
-                    {
-                        "product_id" : "Integer"
-                        "product_name" : "String"
-                        "description" : "String"
-                        "price" : "Float"
-                        "product_type" : "String"
-                    }
-                    {
-                        "product_id" : "Integer"
-                        "product_name" : "String"
-                        "description" : "String"
-                        "price" : "Float"
-                        "product_type" : "String"
-                    }
-                ],
-                "ship_address" :
-                [
-                    {
-                        "id" : "Integer",
-                        "firstname" : "String",
-                        "lastname" : "String",
-                        "address1" : "String",
-                        "address2" : "String",
-                        "city" : "String",
-                        "zipcode" : "String",
-                        "phone" : "String",
-                        "state_name" : "String",
-                        "alternative_phone" : "String",
-                        "company" : "String",
-                        "state_id" : "Integer",
-                        "country_id" :"Integer",
-                        "created_at" : "Timestamp",
-                        "updated_at" : "Timestamp",
-                        "sub_district'" : "String",
-                        "delivery_instruction" : "String",
-                        "preferences" : "String"
-                    }
-                    {
-                        "id" : "Integer",
-                        "firstname" : "String",
-                        "lastname" : "String",
-                        "address1" : "String",
-                        "address2" : "String",
-                        "city" : "String",
-                        "zipcode" : "String",
-                        "phone" : "String",
-                        "state_name" : "String",
-                        "alternative_phone" : "String",
-                        "company" : "String",
-                        "state_id" : "Integer",
-                        "country_id" :"Integer",
-                        "created_at" : "Timestamp",
-                        "updated_at" : "Timestamp",
-                        "sub_district'" : "String",
-                        "delivery_instruction" : "String",
-                        "preferences" : "String"
-                    }
-                     
-                ],
-                "adjustment":
-                [
-                    {
-                        "adjustment_id": "Integer"
-                        "source_type": "String"
-                        "label": "String"
-                        "amount": "Float"
-
-                    }
-                ]
-                
-            }
-            }
-
-+ Response 201 (application/json)
     + Attributes (CreationUpdateResponse)
     
     + Body
     
             {
-                "code": "201"
-                "successful_ids": "A151601"
+                "message": "Data successfully sent."
+                "code": 200
             }
 
 + Response 401 (application/json)
@@ -622,9 +375,10 @@ of the identifiers are found in the server.
     + Body
     
             {
-                "code": 403,
-                "message": "Authorization header not found or invalid."
+                "message": "Authorization header not found or invalid.",
+                "code": 401
             }
+
 
 ## Multiple Orders/Entries for specific User [/orders/user/{user_id}]
 
@@ -633,26 +387,15 @@ of the identifiers are found in the server.
 
 
 ### Get Orders [GET]
+
+This endpoint is used to get information on orders that were made by user whose id is `user_id`.
+
 + Request(application/json)
     
     + Headers
     
             Accept: application/json
             Authorization: Basic base64-of-token:secret
-
-    + Body
-    
-            [
-                {
-                    "order_id": "A151602"
-                },
-                {
-                    "order_id": "A151603"
-                },
-                {
-                    "order_id": "A151604"
-                }
-            ]
     
 + Response 200 (application/json)
 
@@ -673,13 +416,16 @@ of the identifiers are found in the server.
                 "message": "Authorization header not found or invalid."
             }
 
-## Multiple Orders/Entries for Retrieving Fraud Percentage [/api/order/fraud/{fraud_percentage}]
+## Multiple Orders/Entries for Retrieving Fraud Percentage [/orders/fraud/{fraud_percentage}]
 
 + Parameters
     + fraud_percentage (int) - Desired fraud percentage to get the list with 
 
 
 ### Get Orders [GET]
+
+This endpoint is used to get orders which has fraud percentage more than `fraud_percentage`.
+
 + Request(application/json)
     
     + Headers
@@ -705,13 +451,17 @@ of the identifiers are found in the server.
                 "message": "Authorization header not found or invalid."
             }
 
-## Multiple Orders/Entries for Date [/api/order/date/{desired_date}]
+## Multiple Orders/Entries for Date [/orders/date/{desired_date}]
 
 + Parameters
     + desired_date (date) - Desired Date as the param, so that it will search the desired 
 
 
 ### Get Orders [GET]
+
+This endpoint is used to get information on orders that were made on the date `desired_date`.
+The format for `desired_date` is `dd-mm-yyyy`.
+
 + Request(application/json)
     
     + Headers
@@ -737,7 +487,7 @@ of the identifiers are found in the server.
                 "message": "Authorization header not found or invalid."
             }
 
-## Multiple Orders/Entries for specific 2 dates [/api/order/date/{start_date}/{end_date}]
+## Multiple Orders/Entries for specific 2 dates [/orders/date/{start_date}/{end_date}]
 
 + Parameters
     + start_date (date) - Desired fraud percentage to get the list with 
@@ -745,6 +495,11 @@ of the identifiers are found in the server.
 
 
 ### Get Orders [GET]
+
+This endpoint is used to get information on orders that were made between `start_date`
+and `end_date`.
+The format for `start_date` and `desired_date` is `dd-mm-yyyy`.
+
 + Request(application/json)
     
     + Headers
@@ -770,13 +525,18 @@ of the identifiers are found in the server.
                 "message": "Authorization header not found or invalid."
             }
 
-## Multiple Orders/Entires for Greater Than Equals Specific Date [/api/order/date/after/{date}]
+## Multiple Orders/Entires for Greater Than Equals Specific Date [/orders/date/after/{date}]
 
 + Parameters
     + date (date) - Desired date  
     
 
 ### Get Orders [GET]
+
+This endpoint is used to get information on orders that were made on the date `date`
+or later.
+The format for `date` is `dd-mm-yyyy`.
+
 + Request(application/json)
     
     + Headers
@@ -786,7 +546,7 @@ of the identifiers are found in the server.
 + Response 200 (application/json)
 
     + Body
-
+    
             {
                 "A151602" : 65,
                 "A151603" : 100,
@@ -802,13 +562,18 @@ of the identifiers are found in the server.
                 "message": "Authorization header not found or invalid."
             }
 
-## Multiple Orders/Entires for Less Than Equals Specific Date [/api/order/before/after/{date}]
+## Multiple Orders/Entires for Less Than Equals Specific Date [/orders/before/after/{date}]
 
 + Parameters
     + date (date) - Desired date  
     
 
 ### Get Orders [GET]
+
+This endpoint is used to get information on orders that were made on the date `date`
+or before.
+The format for `date` is `dd-mm-yyyy`.
+
 + Request(application/json)
     
     + Headers
